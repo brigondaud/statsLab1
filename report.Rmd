@@ -30,7 +30,6 @@ $$
   Y_i = X_{i, 201} \\
   X_i = \left ( X_{i, 1}, ..., X_{i, 200} \right ) \\
   \epsilon_{i} \sim \mathcal{N}(0,\sigma^{2})\,
-  
 
 \end{cases} \\
 
@@ -53,8 +52,36 @@ model <- lm(formula = X1 ~ ., data = df)
 ```
 In order to compute the number of coefficients assessed as significantly non-zero at level 5%, the following code is used:
 
+
+<!-- Used to eval but not show -->
+```{r echo=FALSE}
+set.seed(0)
+i <- 0
+data <- c()
+while(i < 201) {
+  data <- c(data, rnorm(6000, mean = 0, sd = 1))
+  i <- i + 1
+}
+m <- matrix(data = data, byrow = FALSE, nrow = 6000)
+df <- data.frame(m)
+
+model <- lm(formula = X1 ~ ., data = df)
+```
+
 ```{r}
 coef_count <- sum((summary(model)$coefficients)[,"Pr(>|t|)"] <= 0.05)
+print(coef_count)
+```
+This result is actually unexpected, in fact the number of coefficient assessed as significantly non-zero should be near zero, because there is no correlation between the predictors (they are all independent).
+
+This is a problem because it means that there are more cases where the null hypothesis is wrongly rejected. This problem is observed when multiple hypotheses are tested, because the chance of a rare event to occur increases, thus the likelihood of rejecting the null hypothesis increases (incorrectly).
+
+This problem can be solved by using the Bonferroni corrrection, which consists of using a signigicance level of $ \frac{\alpha}{m} $, where $m$ is the number of hypotheses.
+
+Thus we have a new number of coefficient assessed as significantly non-zero:
+```{r}
+coef_count <- sum((summary(model)$coefficients)[,"Pr(>|t|)"] <= 0.05/200)
+print(coef_count)
 ```
 
 ## Including Plots
