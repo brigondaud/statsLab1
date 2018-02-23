@@ -1,22 +1,60 @@
 ---
-title: "Report"
+title: "Report - First practical"
 author: "Jose Munoz Angulo, Vivien Marcault, Baptiste Rigondaud"
 date: "February 12, 2018"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+## Exercise 1
+
+a) The simulation of 6,000 independent random vectors in dimension 201 with independent components, and put in a data frame is done
+like this:
+
+```{r eval=FALSE}
+set.seed(0)
+i <- 0
+data <- c()
+while(i < 201) {
+  data <- c(data, rnorm(6000, mean = 0, sd = 1))
+  i <- i + 1
+}
+m <- matrix(data = data, byrow = FALSE, nrow = 6000)
+df <- data.frame(m)
 ```
 
-## R Markdown
+b) The linear model is defined like this:
+$$ 
+\forall{i} \in \left\{ 1, ..., 6000\right\}, 
+\begin{cases} 
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+  Y_i = X_{i, 201} \\
+  X_i = \left ( X_{i, 1}, ..., X_{i, 200} \right ) \\
+  \epsilon_{i} \sim \mathcal{N}(0,\sigma^{2})\,
+  
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+\end{cases} \\
 
-```{r cars}
-summary(cars)
+Y = X \beta + \epsilon
+
+$$
+The true model would be defined like this:
+
+$$
+
+\forall{i} \in \left\{ 1, ..., 6000\right\}, \beta_{i} = 0, \sigma^{2} = 1
+
+$$
+Because every components are simulated so that they are independent.
+
+c) To estimate the linear model, we use this R code:
+
+```{r eval=FALSE}
+model <- lm(formula = X1 ~ ., data = df)
+```
+In order to compute the number of coefficients assessed as significantly non-zero at level 5%, the following code is used:
+
+```{r}
+coef_count <- sum((summary(model)$coefficients)[,"Pr(>|t|)"] <= 0.05)
 ```
 
 ## Including Plots
