@@ -151,3 +151,32 @@ summary(y2)
 ```
 
 In both cases, the p-value is good, meaning it is near zero. It means than in both cases, the predictors are significative in each model.
+
+c) We estimate the model using the next piece of code:
+```{r, eval=FALSE}
+model <- lm(Y ~ 0 + X1 + X2, data = df, offset = rep(2, n))
+```
+
+The results in this case are:
+```{r, echo=FALSE}
+set.seed(3)
+n <-10
+x1 <- rnorm(n = n)
+x2 <- 3 * x1 + rnorm(n = n)
+y = 2 + x1 + x2 + rnorm(n = n)
+
+
+# Create data frame
+data = c(y, x1, x2)
+m = matrix(data, byrow = FALSE, nrow = n)
+colnames(m) <- c("Y", "X1", "X2")
+df = data.frame(m)
+
+# Create model
+model <- lm(Y ~ 0 + X1 + X2, data = df, offset = rep(2, n))
+summary(model)
+```
+
+In this case using both variables to estimate the model causes the model itself to have a good p-value, meaning that the such model is a well-suited estimator. However, looking at the p-value for each individual predictor we can notice that they are not really significative. This is not at all inconsistent as it is possible for the model to perfom well even under these conditions.
+
+This can be explained by the fact that it exists a correlation between the variables X1 and X2, which can be observed in the scatter plot, causing the importance of each predictor to be less significative.
