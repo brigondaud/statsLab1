@@ -22,20 +22,26 @@ m <- matrix(data = data, byrow = FALSE, nrow = 6000)
 df <- data.frame(m)
 ```
 
-b) The linear model is defined like this:
-$$ 
-\forall{i} \in \left\{ 1, ..., 6000\right\}, 
-\begin{cases} 
-  Y_i = X_{i, 201} \\
-  X_i = \left ( X_{i, 1}, ..., X_{i, 200} \right ) \\
-  \epsilon_{i} \sim \mathcal{N}(0,\sigma^{2})\,
-\end{cases} \\
-Y = X \beta + \epsilon
-$$
-The true model would be defined like this:
+b) The linear model is defined like this, $\forall{i} \in \left\{ 1, ..., 6000\right\}$:
 
 $$
-\forall{i} \in \left\{ 1, ..., 6000\right\}, \beta_{i} = 0, \sigma^{2} = 1
+    \begin{align}
+      Y_i &= X_{i, 201} \\
+      X_i &= (X_{i, 1}, ..., X_{i, 200}) \\
+      \epsilon_{i} &\sim \mathcal{N}(0,\sigma^{2})
+    \end{align}
+$$
+
+Thus we have the equation:
+
+$$
+Y = X \beta + \epsilon
+$$
+
+The true model would be defined like this, $\forall{i} \in \left\{ 1, ..., 6000\right\}$:
+
+$$
+\beta_{i} = 0,\ \sigma^{2} = 1
 $$
 Because every components are simulated so that they are independent.
 
@@ -78,12 +84,70 @@ coef_count <- sum((summary(model)$coefficients)[,"Pr(>|t|)"] <= 0.05/200)
 print(coef_count)
 ```
 
-## Including Plots
+## Exercise 2
 
-You can also embed plots, for example:
+a) The simulation of a sample of $n=1000$ of the following model is made like so:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r eval=FALSE}
+set.seed(3)
+n <-1000
+x1 <- rnorm(n = n)
+x2 <- 3 * x1 + rnorm(n = n)
+y = 2 + x1 + x2 + rnorm(n = n)
+
+# Create data frame
+data = c(y, x1, x2)
+m = matrix(data, byrow = FALSE, nrow = n)
+colnames(m) <- c("Y", "X1", "X2")
+df = data.frame(m)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r a, echo=FALSE}
+set.seed(3)
+n <-1000
+x1 <- rnorm(n = n)
+x2 <- 3 * x1 + rnorm(n = n)
+y = 2 + x1 + x2 + rnorm(n = n)
+
+# Create data frame
+data = c(y, x1, x2)
+m = matrix(data, byrow = FALSE, nrow = n)
+colnames(m) <- c("Y", "X1", "X2")
+df = data.frame(m)
+plot(x1, x2, xlab="X1", ylab="X2")
+```
+
+The shape of the plot seems to be linear, it can be explained by the fact that $X_2$ has an expresion that is linear with $X_1$ (with an error $\epsilon$).
+
+b) We can estimate both models by doing:
+
+```{r, eval=FALSE}
+y1 <- lm(Y ~ X1, data = df)
+y2 <- lm(Y ~ X2, data = df) 
+```
+
+The results are:
+
+```{r, echo=FALSE}
+set.seed(3)
+n <-10
+x1 <- rnorm(n = n)
+x2 <- 3 * x1 + rnorm(n = n)
+y = 2 + x1 + x2 + rnorm(n = n)
+
+# Create data frame
+data = c(y, x1, x2)
+m = matrix(data, byrow = FALSE, nrow = n)
+colnames(m) <- c("Y", "X1", "X2")
+df = data.frame(m)
+
+# Question 2b
+y1 <- lm(Y ~ X1, data = df)
+summary(y1)
+# y1 :  Good p-value, X1 is significative
+y2 <- lm(Y ~ X2, data = df)
+summary(y2)
+# y1 :  Good p-value, X2 is significative
+```
+
+In both cases, the p-value is good, meaning it is near zero. It means than in both cases, the predictors are significative in each model.
