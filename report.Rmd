@@ -26,22 +26,16 @@ b) The linear model is defined like this:
 $$ 
 \forall{i} \in \left\{ 1, ..., 6000\right\}, 
 \begin{cases} 
-
   Y_i = X_{i, 201} \\
   X_i = \left ( X_{i, 1}, ..., X_{i, 200} \right ) \\
   \epsilon_{i} \sim \mathcal{N}(0,\sigma^{2})\,
-
 \end{cases} \\
-
 Y = X \beta + \epsilon
-
 $$
 The true model would be defined like this:
 
 $$
-
 \forall{i} \in \left\{ 1, ..., 6000\right\}, \beta_{i} = 0, \sigma^{2} = 1
-
 $$
 Because every components are simulated so that they are independent.
 
